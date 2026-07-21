@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Clone</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+
+</head>
+<body>
+
+<div class="app">
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-circle"></div>
+
+            <h2>Claude Clone</h2>
+
+        </div>
+
+        <button id="newChat">
+            + New Chat
+        </button>
+
+        <div class="history" id="history">
+            <!-- Chats -->
+        </div>
+
+        <div class="bottom">
+
+            <button class="settings">
+                Settings
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- Main -->
+
+    <main class="main">
+
+
+        <!-- Header -->
+
+        <header class="topbar">
+
+            <button id="menuBtn">
+
+☰
+
+            </button>
+
+            <div class="model">
+
+GPT OSS 120B
+
+            </div>
+
+        </header>
+
+
+
+        <!-- Chat -->
+
+        <section class="chat-area" id="chatArea">
+
+
+            <div class="welcome">
+
+                <div class="welcome-logo"></div>
+
+                <h1>How can I help you today?</h1>
+
+                <p>
+                    Ask anything...
+                </p>
+
+            </div>
+
+
+            <div id="messages"></div>
+
+        </section>
+
+
+
+
+        <!-- Thinking -->
+
+        <div class="thinking hidden" id="thinking">
+
+            <div class="loader"></div>
+
+            <span>Thinking...</span>
+
+        </div>
+
+
+
+
+        <!-- Composer -->
+
+        <footer class="composer">
+
+            <textarea
+            id="prompt"
+            placeholder="Message Claude..."
+            rows="1"></textarea>
+
+            <button id="send">
+
+↑
+
+            </button>
+
+        </footer>
+
+
+    </main>
+
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
