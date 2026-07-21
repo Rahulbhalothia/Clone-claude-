@@ -49,6 +49,8 @@ id:Date.now().toString(),
 
 title:"New Chat",
 
+favorite:false,
+
 messages:[]
 
 };
