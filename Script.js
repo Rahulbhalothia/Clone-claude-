@@ -523,3 +523,101 @@ prompt.style.height = "auto";
 prompt.style.height = prompt.scrollHeight + "px";
 
 });
+// ======================================
+// Part 3.1
+// Search + Rename + Delete
+// ======================================
+
+// Search Box
+const searchInput = document.createElement("input");
+
+searchInput.placeholder = "Search chats...";
+
+searchInput.className = "search-box";
+
+history.parentNode.insertBefore(searchInput, history);
+
+searchInput.addEventListener("input", () => {
+
+const value = searchInput.value.toLowerCase();
+
+document.querySelectorAll(".chat-item").forEach(item => {
+
+item.style.display =
+item.textContent.toLowerCase().includes(value)
+? "block"
+: "none";
+
+});
+
+});
+
+// Right Click Menu
+
+history.addEventListener("contextmenu", (e)=>{
+
+const item = e.target.closest(".chat-item");
+
+if(!item) return;
+
+e.preventDefault();
+
+const index = [...history.children].indexOf(item);
+
+const chat = conversations[index];
+
+const action = prompt(
+
+"Type:\nrename\nor\ndelete"
+
+);
+
+if(action==="rename"){
+
+const name = prompt(
+
+"New chat name",
+
+chat.title
+
+);
+
+if(name){
+
+chat.title=name;
+
+saveChats();
+
+renderHistory();
+
+}
+
+}
+
+if(action==="delete"){
+
+if(confirm("Delete this chat?")){
+
+conversations.splice(index,1);
+
+if(conversations.length===0){
+
+newChat();
+
+}else{
+
+activeConversation=conversations[0].id;
+
+}
+
+saveChats();
+
+renderHistory();
+
+renderMessages();
+
+}
+
+}
+
+});
