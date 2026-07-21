@@ -895,3 +895,52 @@ white-space:nowrap;
 text-overflow:ellipsis;
 
 }
+/* Attachment Button */
+
+#attachBtn{
+
+width:42px;
+
+height:42px;
+
+border:none;
+
+border-radius:50%;
+
+background:#2a2823;
+
+color:white;
+
+cursor:pointer;
+
+font-size:20px;
+
+transition:.25s;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
+
+#attachBtn:hover{
+
+background:var(--accent);
+
+}
+
+/* Image Preview */
+
+.preview{
+
+max-width:220px;
+
+margin-top:10px;
+
+border-radius:12px;
+
+border:1px solid var(--border);
+
+}
