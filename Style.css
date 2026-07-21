@@ -876,3 +876,22 @@ font-size:14px;
 color:#999;
 
 }
+.chat-item{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+.chat-item span{
+
+overflow:hidden;
+
+white-space:nowrap;
+
+text-overflow:ellipsis;
+
+}
