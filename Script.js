@@ -97,7 +97,9 @@ item.classList.add("active");
 
 }
 
-item.textContent=chat.title;
+item.innerHTML = `
+<span>${chat.favorite ? "⭐ " : ""}${chat.title}</span>
+`;
 
 item.onclick=()=>{
 
