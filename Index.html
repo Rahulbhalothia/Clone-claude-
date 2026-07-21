@@ -1,145 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claude Clone</title>
 
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
 
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Claude Clone</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
 
 </head>
+
 <body>
 
 <div class="app">
 
-    <!-- Sidebar -->
+<!-- Sidebar -->
 
-    <aside class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar">
 
-        <div class="logo">
+<div class="logo">
 
-            <div class="logo-circle"></div>
+<div class="logo-circle"></div>
 
-            <h2>Claude Clone</h2>
-
-        </div>
-
-        <button id="newChat">
-            + New Chat
-        </button>
-
-        <div class="history" id="history">
-            <!-- Chats -->
-        </div>
-
-        <div class="bottom">
-
-            <button class="settings">
-                Settings
-            </button>
-
-        </div>
-
-    </aside>
-
-
-
-    <!-- Main -->
-
-    <main class="main">
-
-
-        <!-- Header -->
-
-        <header class="topbar">
-
-            <button id="menuBtn">
-
-☰
-
-            </button>
-
-            <div class="model">
-
-GPT OSS 120B
-
-            </div>
-
-        </header>
-
-
-
-        <!-- Chat -->
-
-        <section class="chat-area" id="chatArea">
-
-
-            <div class="welcome">
-
-                <div class="welcome-logo"></div>
-
-                <h1>How can I help you today?</h1>
-
-                <p>
-                    Ask anything...
-                </p>
-
-            </div>
-
-
-            <div id="messages"></div>
-
-        </section>
-
-
-
-
-        <!-- Thinking -->
-
-        <div class="thinking hidden" id="thinking">
-
-            <div class="loader"></div>
-
-            <span>Thinking...</span>
-
-        </div>
-
-
-
-
-        <!-- Composer -->
-
-        <footer class="composer">
-
-            <textarea
-            id="prompt"
-            placeholder="Message Claude..."
-            rows="1"></textarea>
-
-            <button id="send">
-
-↑
-
-            </button>
-
-        </footer>
-
-
-    </main>
-
+<h2>Claude Clone</h2>
 
 </div>
 
+<button id="newChat">
 
+➕ New Chat
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<input
+type="text"
+id="searchChat"
+placeholder="Search chats...">
+
+<div
+class="history"
+id="history">
+
+</div>
+
+<div class="bottom">
+
+<button
+class="settings">
+
+⚙ Settings
+
+</button>
+
+</div>
+
+</aside>
+
+<!-- Main -->
+
+<main class="main">
+
+<header class="topbar">
+
+<button id="menuBtn">
+
+☰
+
+</button>
+
+<div class="model">
+
+GPT-OSS-120B
+
+</div>
+
+<button id="chatMenu">
+
+⋮
+
+</button>
+
+</header>
+
+<section
+class="chat-area"
+id="chatArea">
+
+<div class="welcome">
+
+<div class="welcome-logo"></div>
+
+<h1>
+
+How can I help you today?
+
+</h1>
+
+<p>
+
+Ask me anything...
+
+</p>
+
+</div>
+
+<div id="messages">
+
+</div>
+
+</section>
+
+<div
+class="thinking hidden"
+id="thinking">
+
+<div class="loader"></div>
+
+<span>
+
+Thinking...
+
+</span>
+
+</div>
+<!-- Composer -->
+
+<footer class="composer">
+
+<input
+type="file"
+id="fileInput"
+accept="image/*,.pdf"
+multiple
+hidden>
+
+<button
+id="attachBtn"
+title="Attach File">
+
+📎
+
+</button>
+
+<textarea
+
+id="prompt"
+
+rows="1"
+
+placeholder="Message Claude Clone...">
+
+</textarea>
+
+<button
+
+id="send"
+
+title="Send">
+
+<svg
+width="22"
+height="22"
+viewBox="0 0 24 24"
+fill="none"
+stroke="currentColor"
+stroke-width="2">
+
+<path d="M12 5v14"></path>
+
+<path d="M5 12l7-7 7 7"></path>
+
+</svg>
+
+</button>
+
+</footer>
+
+<div class="footer-text">
+
+Claude Clone may make mistakes.
+Always verify important information.
+
+</div>
+
+</main>
+
+</div>
 
 <script src="script.js"></script>
 
 </body>
+
 </html>
