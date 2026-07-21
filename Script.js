@@ -621,3 +621,221 @@ renderMessages();
 }
 
 });
+// ======================================
+// Part 3.2A
+// Pin + Favorite + Export
+// ======================================
+
+// Pin Chat
+function pinChat(chatId){
+
+const index = conversations.findIndex(c=>c.id===chatId);
+
+if(index===-1) return;
+
+const chat = conversations.splice(index,1)[0];
+
+conversations.unshift(chat);
+
+saveChats();
+
+renderHistory();
+
+}
+
+// Export Chat
+function exportChat(){
+
+const chat = getChat();
+
+if(!chat) return;
+
+let text = "";
+
+chat.messages.forEach(msg=>{
+
+text += `${msg.role.toUpperCase()}\n`;
+text += `${msg.content}\n\n`;
+
+});
+
+const blob = new Blob([text],{
+type:"text/plain"
+});
+
+const url = URL.createObjectURL(blob);
+
+const a=document.createElement("a");
+
+a.href=url;
+
+a.download=`${chat.title}.txt`;
+
+a.click();
+
+URL.revokeObjectURL(url);
+
+}
+
+// Favorite
+function toggleFavorite(chatId){
+
+const chat = conversations.find(c=>c.id===chatId);
+
+if(!chat) return;
+
+chat.favorite = !chat.favorite;
+
+saveChats();
+
+renderHistory();
+
+}// ======================================
+// Part 3.2B
+// Import + Copy + Chat Menu
+// ======================================
+
+// Copy Current Chat
+function copyChat() {
+
+    const chat = getChat();
+
+    if (!chat) return;
+
+    let text = "";
+
+    chat.messages.forEach(msg => {
+
+        text += `${msg.role.toUpperCase()}\n`;
+        text += `${msg.content}\n\n`;
+
+    });
+
+    navigator.clipboard.writeText(text);
+
+    alert("Chat copied successfully.");
+
+}
+
+// Import Chat
+function importChat(file) {
+
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+
+        const chat = {
+
+            id: Date.now().toString(),
+
+            title: "Imported Chat",
+
+            favorite: false,
+
+            messages: [
+
+                {
+
+                    role: "assistant",
+
+                    content: e.target.result
+
+                }
+
+            ]
+
+        };
+
+        conversations.unshift(chat);
+
+        activeConversation = chat.id;
+
+        saveChats();
+
+        renderHistory();
+
+        renderMessages();
+
+    };
+
+    reader.readAsText(file);
+
+}
+
+// Hidden File Input
+
+const importInput = document.createElement("input");
+
+importInput.type = "file";
+
+importInput.accept = ".txt";
+
+importInput.style.display = "none";
+
+document.body.appendChild(importInput);
+
+importInput.onchange = (e) => {
+
+    if (e.target.files.length) {
+
+        importChat(e.target.files[0]);
+
+    }
+
+};
+
+// Chat Menu
+
+function showChatMenu() {
+
+    const action = prompt(
+
+`Choose option:
+
+1 = Export
+
+2 = Import
+
+3 = Copy Chat
+
+4 = Pin Chat
+
+5 = Favorite`
+
+);
+
+    switch(action){
+
+        case "1":
+
+            exportChat();
+
+            break;
+
+        case "2":
+
+            importInput.click();
+
+            break;
+
+        case "3":
+
+            copyChat();
+
+            break;
+
+        case "4":
+
+            pinChat(activeConversation);
+
+            break;
+
+        case "5":
+
+            toggleFavorite(activeConversation);
+
+            break;
+
+    }
+
+          }
