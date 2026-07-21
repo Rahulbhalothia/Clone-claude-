@@ -843,3 +843,65 @@ function showChatMenu() {
     }
 
           }
+// ===============================
+// Part 4.3
+// Image & PDF Upload
+// ===============================
+
+const fileInput = document.getElementById("fileInput");
+const attachBtn = document.getElementById("attachBtn");
+
+attachBtn.onclick = () => {
+
+fileInput.click();
+
+};
+
+fileInput.onchange = (e) => {
+
+const file = e.target.files[0];
+
+if (!file) return;
+
+if (file.type.startsWith("image/")) {
+
+const reader = new FileReader();
+
+reader.onload = () => {
+
+const img = document.createElement("img");
+
+img.src = reader.result;
+
+img.className = "preview";
+
+messages.appendChild(img);
+
+scrollBottom();
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+else if (file.type === "application/pdf") {
+
+const div = document.createElement("div");
+
+div.className = "message ai";
+
+div.innerHTML = `
+<div class="bubble">
+📄 <b>${file.name}</b><br>
+PDF attached successfully.
+</div>
+`;
+
+messages.appendChild(div);
+
+scrollBottom();
+
+}
+
+};
