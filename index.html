@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Claude Clone</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+      <div class="logo-circle"></div>
+      <h2>Claude Clone</h2>
+    </div>
+
+    <button id="newChat">➕ New Chat</button>
+
+    <input
+      type="text"
+      id="searchChat"
+      placeholder="Search chats...">
+
+    <div class="history" id="history"></div>
+
+    <div class="bottom">
+      <button class="settings">⚙ Settings</button>
+    </div>
+
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="topbar">
+
+      <button id="menuBtn">☰</button>
+
+      <div class="model">
+        GPT-OSS-120B
+      </div>
+
+      <button id="chatMenu">⋮</button>
+
+    </header>
+
+    <section class="chat-area" id="chatArea">
+
+      <div class="welcome">
+
+        <div class="welcome-logo"></div>
+
+        <h1>How can I help you today?</h1>
+
+        <p>Ask me anything...</p>
+
+      </div>
+
+      <div id="messages"></div>
+
+    </section>
+
+    <div class="thinking hidden" id="thinking">
+
+      <div class="loader"></div>
+
+      <span>Thinking...</span>
+
+    </div>
+
+    <!-- Composer -->
+
+    <footer class="composer">
+
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*,.pdf"
+        multiple
+        hidden>
+
+      <button id="attachBtn" title="Attach File">
+        📎
+      </button>
+
+      <textarea
+        id="prompt"
+        rows="1"
+        placeholder="Message Claude Clone..."></textarea>
+
+      <button id="send" title="Send">
+
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+
+          <path d="M12 5v14"></path>
+          <path d="M5 12l7-7 7 7"></path>
+
+        </svg>
+
+      </button>
+
+    </footer>
+
+    <div class="footer-text">
+      Claude Clone may make mistakes. Always verify important information.
+          </div>    <!-- Image Preview -->
+    <div id="imagePreview" class="preview-container"></div>
+
+    <!-- PDF Preview -->
+    <div id="pdfPreview" class="preview-container"></div>
+
+    <!-- Scroll To Bottom -->
+    <button id="scrollBottom"
+            class="scroll-btn"
+            title="Scroll to Bottom">
+      ↓
+    </button>
+
+    <!-- Chat Menu -->
+    <div id="chatMenuDropdown" class="dropdown hidden">
+      <button id="renameChat">✏ Rename Chat</button>
+      <button id="clearChat">🗑 Clear Chat</button>
+      <button id="deleteChat">❌ Delete Chat</button>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+      <div class="modal-content">
+
+        <h2>Settings</h2>
+
+        <label>
+          <input type="checkbox" id="darkMode">
+          Dark Mode
+        </label>
+
+        <label>
+          <input type="checkbox" id="streamMode" checked>
+          Stream Responses
+        </label>
+
+        <button id="closeSettings">
+          Close
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Delete Chat Modal -->
+    <div id="deleteModal" class="modal hidden">
+      <div class="modal-content">
+
+        <h3>Delete Chat</h3>
+
+        <p>
+          Are you sure you want to delete this chat?
+        </p>
+
+        <div class="modal-actions">
+          <button id="cancelDelete">Cancel</button>
+          <button id="confirmDelete" class="danger">
+            Delete
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div id="searchOverlay" class="search-overlay hidden">
+
+      <div class="search-box">
+
+        <input
+          type="text"
+          id="globalSearch"
+          placeholder="Search messages...">
+
+        <button id="closeSearch">✕</button>
+
+      </div>
+
+      <div id="searchResults"
+           class="search-results"></div>
+
+    </div>
+
+    <!-- Connection Status -->
+    <div id="connectionStatus"
+         class="connection-status hidden">
+
+      <span class="status-dot"></span>
+
+      <span id="statusText">
+        Connected
+      </span>
+
+    </div>
+
+    <!-- Notification Area -->
+    <div id="notificationArea"></div>
+
+    <!-- Version -->
+    <div class="app-version">
+      Claude Clone v1.0
+  </div>  </main>
+
+</div>
+
+<script src="script.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (window.hljs) {
+    hljs.highlightAll();
+  }
+
+  if (window.marked) {
+    marked.setOptions({
+      breaks: true
+    });
+  }
+
+});
+</script>
+
+</body>
+  </html>
