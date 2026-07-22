@@ -905,3 +905,868 @@ scrollBottom();
 }
 
 };
+// ======================================
+// Part 5
+// Voice + Drag & Drop + Draft
+// ======================================
+
+// ---------- Voice Input ----------
+
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+
+const recognition = new SpeechRecognition();
+
+recognition.lang = "en-US";
+recognition.continuous = false;
+recognition.interimResults = true;
+
+const voiceBtn = document.createElement("button");
+voiceBtn.id = "voiceBtn";
+voiceBtn.innerHTML = "🎤";
+voiceBtn.title = "Voice Input";
+
+document.querySelector(".composer")
+.appendChild(voiceBtn);
+
+voiceBtn.onclick = () => {
+
+recognition.start();
+
+};
+
+recognition.onresult = (e) => {
+
+let text = "";
+
+for (let i = e.resultIndex; i < e.results.length; i++) {
+
+text += e.results[i][0].transcript;
+
+}
+
+prompt.value = text;
+prompt.dispatchEvent(new Event("input"));
+
+};
+
+recognition.onerror = () => {
+
+showToast("Voice recognition failed.");
+
+};
+
+}
+
+// ---------- Auto Save Draft ----------
+
+const DRAFT_KEY = "claude_draft";
+
+prompt.value = localStorage.getItem(DRAFT_KEY) || "";
+
+prompt.addEventListener("input", () => {
+
+localStorage.setItem(
+DRAFT_KEY,
+prompt.value
+);
+
+});
+
+function clearDraft(){
+
+localStorage.removeItem(DRAFT_KEY);
+
+}
+
+// ---------- Drag & Drop ----------
+
+["dragenter","dragover"].forEach(event=>{
+
+document.addEventListener(event,e=>{
+
+e.preventDefault();
+
+document.body.classList.add("dragging");
+
+});
+
+});
+
+["dragleave","drop"].forEach(event=>{
+
+document.addEventListener(event,e=>{
+
+e.preventDefault();
+
+document.body.classList.remove("dragging");
+
+});
+
+});
+
+document.addEventListener("drop",e=>{
+
+const file=e.dataTransfer.files[0];
+
+if(!file) return;
+
+handleDroppedFile(file);
+
+});
+
+function handleDroppedFile(file){
+
+if(file.type.startsWith("image/")){
+
+const reader=new FileReader();
+
+reader.onload=()=>{
+
+const wrap=document.createElement("div");
+
+wrap.className="preview-item";
+
+wrap.innerHTML=`
+<img src="${reader.result}" class="preview">
+<button class="remove-preview">✕</button>
+`;
+
+document
+.getElementById("imagePreview")
+.appendChild(wrap);
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+else if(file.type==="application/pdf"){
+
+const wrap=document.createElement("div");
+
+wrap.className="preview-item";
+
+wrap.innerHTML=`
+<div class="pdf-preview">
+📄 ${file.name}
+</div>
+
+<button class="remove-preview">
+✕
+</button>
+`;
+
+document
+.getElementById("pdfPreview")
+.appendChild(wrap);
+
+}
+
+bindRemoveButtons();
+
+}
+
+// ---------- Remove Preview ----------
+
+function bindRemoveButtons(){
+
+document
+.querySelectorAll(".remove-preview")
+.forEach(btn=>{
+
+btn.onclick=()=>{
+
+btn.parentElement.remove();
+
+};
+
+});
+
+}
+
+// ---------- Send Override ----------
+
+const oldSend = sendMessage;
+
+sendMessage = async function(){
+
+await oldSend();
+
+clearDraft();
+
+};// ======================================
+// Part 6
+// Settings + Theme + Toast + Status
+// ======================================
+
+// Elements
+
+const settingsBtn = document.querySelector(".settings");
+const settingsModal = document.getElementById("settingsModal");
+const closeSettings = document.getElementById("closeSettings");
+
+const darkMode = document.getElementById("darkMode");
+const streamMode = document.getElementById("streamMode");
+
+const chatMenuBtn = document.getElementById("chatMenu");
+const chatMenu = document.getElementById("chatMenuDropdown");
+
+const connectionStatus =
+document.getElementById("connectionStatus");
+
+const statusText =
+document.getElementById("statusText");
+
+// ==========================
+// Settings
+// ==========================
+
+settingsBtn.onclick = () => {
+
+settingsModal.classList.remove("hidden");
+
+};
+
+closeSettings.onclick = () => {
+
+settingsModal.classList.add("hidden");
+
+};
+
+settingsModal.onclick = (e)=>{
+
+if(e.target===settingsModal){
+
+settingsModal.classList.add("hidden");
+
+}
+
+};
+
+// ==========================
+// Theme
+// ==========================
+
+const THEME_KEY="claude_theme";
+
+function applyTheme(theme){
+
+document.body.dataset.theme=theme;
+
+localStorage.setItem(THEME_KEY,theme);
+
+darkMode.checked=(theme==="dark");
+
+}
+
+applyTheme(
+
+localStorage.getItem(THEME_KEY)||"dark"
+
+);
+
+darkMode.onchange=()=>{
+
+applyTheme(
+
+darkMode.checked
+
+? "dark"
+
+: "light"
+
+);
+
+};
+
+// ==========================
+// Stream Mode
+// ==========================
+
+streamMode.checked=true;
+
+streamMode.onchange=()=>{
+
+showToast(
+
+streamMode.checked
+
+? "Streaming Enabled"
+
+: "Streaming Disabled"
+
+);
+
+};
+
+// ==========================
+// Chat Menu
+// ==========================
+
+chatMenuBtn.onclick=(e)=>{
+
+e.stopPropagation();
+
+chatMenu.classList.toggle("hidden");
+
+};
+
+document.addEventListener("click",()=>{
+
+chatMenu.classList.add("hidden");
+
+});
+
+// ==========================
+// Toast
+// ==========================
+
+function showToast(text){
+
+let toast=document.getElementById("toast");
+
+if(!toast){
+
+toast=document.createElement("div");
+
+toast.id="toast";
+
+toast.className="toast";
+
+document.body.appendChild(toast);
+
+}
+
+toast.textContent=text;
+
+toast.classList.remove("hidden");
+
+clearTimeout(toast.timer);
+
+toast.timer=setTimeout(()=>{
+
+toast.classList.add("hidden");
+
+},2500);
+
+}
+
+// ==========================
+// Connection Status
+// ==========================
+
+function updateConnection(){
+
+if(navigator.onLine){
+
+statusText.textContent="Online";
+
+connectionStatus.style.display="flex";
+
+connectionStatus.querySelector(".status-dot").style.background="#2ecc71";
+
+}
+
+else{
+
+statusText.textContent="Offline";
+
+connectionStatus.style.display="flex";
+
+connectionStatus.querySelector(".status-dot").style.background="#e74c3c";
+
+showToast("No Internet Connection");
+
+}
+
+}
+
+window.addEventListener("online",updateConnection);
+
+window.addEventListener("offline",updateConnection);
+
+updateConnection();// ======================================
+// Part 7
+// Retry + Stop + Regenerate + Reconnect
+// ======================================
+
+// ---------- Generate Control ----------
+
+let abortController = null;
+let lastPrompt = "";
+
+// Stop Button
+
+const stopBtn = document.createElement("button");
+
+stopBtn.id = "stopGenerate";
+
+stopBtn.textContent = "⏹ Stop";
+
+stopBtn.style.display = "none";
+
+document.querySelector(".composer").appendChild(stopBtn);
+
+stopBtn.onclick = () => {
+
+    if (abortController) {
+
+        abortController.abort();
+
+        showToast("Generation stopped.");
+
+    }
+
+};
+
+// ---------- Override Send ----------
+
+const oldSendMessage = sendMessage;
+
+sendMessage = async function () {
+
+    lastPrompt = prompt.value.trim();
+
+    abortController = new AbortController();
+
+    stopBtn.style.display = "flex";
+
+    try {
+
+        await oldSendMessage();
+
+    } finally {
+
+        stopBtn.style.display = "none";
+
+    }
+
+};
+
+// ---------- Retry ----------
+
+async function retryResponse() {
+
+    const chat = getChat();
+
+    if (!chat) return;
+
+    if (chat.messages.length === 0) return;
+
+    const last = chat.messages.pop();
+
+    if (last.role === "assistant") {
+
+        saveChats();
+
+        renderMessages();
+
+        prompt.value = lastPrompt;
+
+        sendMessage();
+
+    }
+
+}
+
+// ---------- Regenerate ----------
+
+async function regenerateResponse() {
+
+    const chat = getChat();
+
+    if (!chat) return;
+
+    while (
+
+        chat.messages.length &&
+
+        chat.messages[chat.messages.length - 1].role === "assistant"
+
+    ) {
+
+        chat.messages.pop();
+
+    }
+
+    saveChats();
+
+    renderMessages();
+
+    prompt.value = lastPrompt;
+
+    sendMessage();
+
+}
+
+// ---------- Better Error ----------
+
+window.addEventListener("unhandledrejection", e => {
+
+    console.error(e.reason);
+
+    showToast("Unexpected Error");
+
+});
+
+window.addEventListener("error", e => {
+
+    console.error(e.error);
+
+});
+
+// ---------- Worker Reconnect ----------
+
+async function checkWorker() {
+
+    try {
+
+        const res = await fetch(WORKER_URL, {
+
+            method: "HEAD"
+
+        });
+
+        if (res.ok) {
+
+            connectionStatus.querySelector(".status-dot").style.background = "#2ecc71";
+
+            statusText.textContent = "Worker Online";
+
+        } else {
+
+            throw new Error();
+
+        }
+
+    } catch {
+
+        connectionStatus.querySelector(".status-dot").style.background = "#f39c12";
+
+        statusText.textContent = "Worker Offline";
+
+    }
+
+}
+
+setInterval(checkWorker, 30000);
+
+checkWorker();// ======================================
+// Part 8
+// Edit + Delete + Shortcuts + Sidebar
+// ======================================
+
+// ---------- Keyboard Shortcuts ----------
+
+document.addEventListener("keydown", (e) => {
+
+    // Ctrl + N = New Chat
+    if (e.ctrlKey && e.key.toLowerCase() === "n") {
+        e.preventDefault();
+        newChat();
+    }
+
+    // Ctrl + K = Search
+    if (e.ctrlKey && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        const search = document.getElementById("globalSearch");
+        if (search) search.focus();
+    }
+
+    // Escape = Close Modals
+    if (e.key === "Escape") {
+        document
+            .querySelectorAll(".modal")
+            .forEach(m => m.classList.add("hidden"));
+
+        chatMenu.classList.add("hidden");
+    }
+
+});
+
+// ---------- Responsive Sidebar ----------
+
+document.addEventListener("click", (e) => {
+
+    if (
+        window.innerWidth <= 900 &&
+        !sidebar.contains(e.target) &&
+        e.target !== menuBtn
+    ) {
+        sidebar.classList.add("hide");
+    }
+
+});
+
+menuBtn.addEventListener("click", () => {
+
+    sidebar.classList.toggle("hide");
+
+});
+
+// ---------- Delete Single Message ----------
+
+messages.addEventListener("contextmenu", (e) => {
+
+    const bubble = e.target.closest(".bubble");
+
+    if (!bubble) return;
+
+    e.preventDefault();
+
+    if (!confirm("Delete this message?")) return;
+
+    bubble.parentElement.remove();
+
+    showToast("Message deleted");
+
+});
+
+// ---------- Edit User Message ----------
+
+messages.addEventListener("dblclick", (e) => {
+
+    const bubble = e.target.closest(".bubble");
+
+    if (!bubble) return;
+
+    const wrapper = bubble.parentElement;
+
+    if (!wrapper.classList.contains("user")) return;
+
+    const oldText = bubble.textContent;
+
+    const input = document.createElement("textarea");
+
+    input.value = oldText;
+
+    input.className = "edit-message";
+
+    bubble.replaceWith(input);
+
+    input.focus();
+
+    input.onblur = () => {
+
+        bubble.textContent = input.value;
+
+        input.replaceWith(bubble);
+
+        showToast("Message updated");
+
+    };
+
+});
+
+// ---------- Streaming Cursor ----------
+
+const style = document.createElement("style");
+
+style.textContent = `
+.cursor::after{
+content:"▋";
+display:inline-block;
+margin-left:2px;
+animation:blink .8s infinite;
+}
+
+@keyframes blink{
+
+50%{
+opacity:0;
+}
+
+}
+`;
+
+document.head.appendChild(style);
+
+// ---------- Auto Hide Sidebar ----------
+
+window.addEventListener("resize", () => {
+
+    if (window.innerWidth > 900) {
+
+        sidebar.classList.remove("hide");
+
+    }
+
+});// ======================================
+// Part 9 (Final)
+// Share + Models + Optimization
+// ======================================
+
+// ---------- AI Models ----------
+
+const MODELS = [
+    "GPT-OSS-120B",
+    "GPT-4.1",
+    "Claude 4",
+    "Gemini 2.5",
+    "DeepSeek V3"
+];
+
+const modelSelect = document.getElementById("modelSelect");
+
+if (modelSelect) {
+
+    MODELS.forEach(model => {
+
+        const option = document.createElement("option");
+
+        option.value = model;
+        option.textContent = model;
+
+        modelSelect.appendChild(option);
+
+    });
+
+    modelSelect.value =
+        localStorage.getItem("selectedModel") || MODELS[0];
+
+    modelSelect.onchange = () => {
+
+        localStorage.setItem(
+            "selectedModel",
+            modelSelect.value
+        );
+
+        showToast(
+            "Model changed to " + modelSelect.value
+        );
+
+    };
+
+}
+
+// ---------- Share Chat ----------
+
+function shareChat() {
+
+    const chat = getChat();
+
+    if (!chat) return;
+
+    const text = chat.messages
+        .map(m => `${m.role.toUpperCase()}: ${m.content}`)
+        .join("\n\n");
+
+    if (navigator.share) {
+
+        navigator.share({
+
+            title: "Claude Chat",
+
+            text
+
+        });
+
+    } else {
+
+        navigator.clipboard.writeText(text);
+
+        showToast("Chat copied to clipboard");
+
+    }
+
+}
+
+// ---------- Export JSON ----------
+
+function exportCurrentChat() {
+
+    const chat = getChat();
+
+    if (!chat) return;
+
+    const blob = new Blob(
+
+        [JSON.stringify(chat, null, 2)],
+
+        {
+
+            type: "application/json"
+
+        }
+
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+
+    a.download = "chat.json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+// ---------- Performance ----------
+
+window.addEventListener("load", () => {
+
+    console.log(
+
+        "Claude Clone Ready"
+
+    );
+
+});
+
+// ---------- Auto Scroll ----------
+
+const observer = new MutationObserver(() => {
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+});
+
+observer.observe(messages, {
+
+    childList: true,
+
+    subtree: true
+
+});
+
+// ---------- Lazy Images ----------
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    document
+
+        .querySelectorAll("img")
+
+        .forEach(img => {
+
+            img.loading = "lazy";
+
+        });
+
+});
+
+// ---------- Save Before Exit ----------
+
+window.addEventListener("beforeunload", () => {
+
+    saveChats();
+
+});
+
+// ---------- Version ----------
+
+console.log("Claude Clone v1.0.0");
+
+// ======================================
+// End
+// ======================================
